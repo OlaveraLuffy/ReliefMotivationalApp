@@ -65,7 +65,7 @@ class _ReliefAppState extends State<ReliefApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Relief - Motivational App',
+      title: 'Relief',
       navigatorKey: navigatorKey,
       theme: lightTheme,
       darkTheme: darkTheme,

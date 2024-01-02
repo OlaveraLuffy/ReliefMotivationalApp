@@ -7,9 +7,11 @@ import 'package:com.relief.motivationalapp/widgets/appbar.dart';
 import 'package:com.relief.motivationalapp/services/journal_data_manager.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:video_player/video_player.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'dart:io';
 import 'dart:convert';
+import 'dart:developer' as dev;
 import 'package:fleather/fleather.dart';
 import 'package:quill_delta/quill_delta.dart';
 
@@ -24,21 +26,31 @@ class _CreateJournalState extends State<CreateJournal> {
   late final _fontSize = 26.0;
   late JournalEntry journalEntry;
   late TextEditingController _titleController;
-  late FleatherController _controller; //fleather controller
+  late FleatherController _controller;
   late FocusNode _focusNode;
 
   File ? _selectedImage;
 
-  Future<void> saveEntryField() async {
-    // Extract content from FleatherController
-    final content = jsonEncode(_controller.document);
-    final file = File('${Directory.systemTemp.path}/quick_start.json');
-    // And show a snack bar on success.
-    file.writeAsString(content).then((_) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Saved.')),
-      );
-    });
+  @override
+  void initState() {
+    super.initState();
+    _titleController = TextEditingController();
+    _controller = FleatherController();
+    _focusNode = FocusNode();
+  }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _controller.dispose();
+    _focusNode.dispose();
+
+    super.dispose();
+  }
+
+  Future<void> saveEntryField(ParchmentDocument document) async {
+
+    final content = json.encode(document.toDelta().toList());
     /*
     Delta contentDelta = _controller.document.toDelta();
     String content ='';
@@ -49,13 +61,18 @@ class _CreateJournalState extends State<CreateJournal> {
       }
     }
     content = content.trim(); //remove spaces
-     */
+    */
     await JournalDataManager.saveEntry(JournalEntry(
         dateTime: journalEntry.dateTime,
         title: _titleController.text,
         content: content,
         filePath: journalEntry.filePath
     ));
+
+    // show a snackbar upon successful save
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Entry saved.')),
+    );
   }
 
   Future<void> _pickImage() async {
@@ -75,36 +92,6 @@ class _CreateJournalState extends State<CreateJournal> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    _titleController = TextEditingController();
-    _controller = FleatherController();
-    _focusNode = FocusNode();
-
-  }
-
-  @override
-  void dispose() {
-    _titleController.dispose();
-    _controller.dispose();
-    _focusNode.dispose();
-
-    super.dispose();
-  }
-
-  // Set elements in the FleatherField
-  void setTextInFleatherField() {
-    // Set new text
-    //Delta delta = Delta()..insert('Your text goes here');
-    //_controller.compose(delta);
-    // You can also insert other elements like images or links if needed
-    // Delta imageDelta = Delta()..insert(Embed.image('image_path.jpg'));
-    // _controller.compose(imageDelta);
-    // Delta linkDelta = Delta()..insert(Embed.link('https://example.com', 'Link Text'));
-    // _controller.compose(linkDelta);
-  }
-
-  @override
   Widget build(BuildContext context) {
     final Map<String, dynamic>? arguments =
     ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
@@ -112,8 +99,9 @@ class _CreateJournalState extends State<CreateJournal> {
     if (arguments?['journalEntry'] != null) {
       journalEntry = arguments!['journalEntry'];
       _titleController.text = journalEntry.title;
-      Delta delta = Delta()..insert(journalEntry.content);
-      _controller.compose(delta);
+      ParchmentDocument? document;
+      document = ParchmentDocument.fromJson(json.decode(journalEntry.content));
+      _controller = FleatherController(document: document);
     } else {
       journalEntry = JournalEntry();
     }
@@ -181,7 +169,7 @@ class _CreateJournalState extends State<CreateJournal> {
                       fillColor: Theme.of(context).colorScheme.primaryContainer,
                       contentPadding: const EdgeInsets.symmetric(
                           horizontal: 15.0, vertical: 10.0),
-                      hintText: 'How\'s your day?',
+                      hintText: 'How\'s your heart?',
                       hintStyle: Theme.of(context).textTheme.titleMedium!.copyWith(
                           color: Theme.of(context).colorScheme.onPrimaryContainer),
                     ),
@@ -204,9 +192,9 @@ class _CreateJournalState extends State<CreateJournal> {
             bottom: 50,
             right: 0.0,
             child: FloatingActionButton(
-              heroTag: 'saveButtonFirst',
+              heroTag: 'saveButton',
               onPressed: () async {
-                await saveEntryField();
+                await saveEntryField(_controller!.document);
                 if (context.mounted) {
                   Navigator.pop(context);
                 }
