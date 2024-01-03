@@ -3,7 +3,6 @@ import 'dart:developer' as dev;
 import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
-import 'package:fleather/fleather.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:com.relief.motivationalapp/models/journal_entry.dart';

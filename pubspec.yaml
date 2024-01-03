@@ -57,6 +57,7 @@ dependencies:
   page_transition: ^2.1.0
   quill_delta: ^3.0.0-nullsafety.2
   html_unescape: ^2.0.0
+  flutter_colorpicker: ^1.0.3
 
 dev_dependencies:
   flutter_test:

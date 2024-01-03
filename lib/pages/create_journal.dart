@@ -1,4 +1,3 @@
-import 'package:com.relief.motivationalapp/theme/theme_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:com.relief.motivationalapp/models/journal_entry.dart';
@@ -6,13 +5,15 @@ import 'package:com.relief.motivationalapp/services/ads.dart';
 import 'package:com.relief.motivationalapp/widgets/appbar.dart';
 import 'package:com.relief.motivationalapp/services/journal_data_manager.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:video_player/video_player.dart';
-import 'package:path_provider/path_provider.dart';
-
 import 'dart:io';
 import 'dart:convert';
-import 'dart:developer' as dev;
 import 'package:fleather/fleather.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+
+import 'package:com.relief.motivationalapp/theme/theme_constants.dart';
+import 'package:video_player/video_player.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:developer' as dev;
 import 'package:quill_delta/quill_delta.dart';
 
 class CreateJournal extends StatefulWidget {
@@ -23,13 +24,13 @@ class CreateJournal extends StatefulWidget {
 }
 
 class _CreateJournalState extends State<CreateJournal> {
-  late final _fontSize = 26.0;
   late JournalEntry journalEntry;
   late TextEditingController _titleController;
   late FleatherController _controller;
   late FocusNode _focusNode;
-
   File ? _selectedImage;
+
+  late Color _selectedBackgroundColor = Theme.of(context).colorScheme.primaryContainer;
 
   @override
   void initState() {
@@ -49,47 +50,63 @@ class _CreateJournalState extends State<CreateJournal> {
   }
 
   Future<void> saveEntryField(ParchmentDocument document) async {
-
     final content = json.encode(document.toDelta().toList());
-    /*
-    Delta contentDelta = _controller.document.toDelta();
-    String content ='';
-
-    for (var operation in contentDelta.toList()) {
-      if (operation.isInsert) {
-        content += operation.data.toString();
-      }
-    }
-    content = content.trim(); //remove spaces
-    */
     await JournalDataManager.saveEntry(JournalEntry(
         dateTime: journalEntry.dateTime,
         title: _titleController.text,
         content: content,
         filePath: journalEntry.filePath
     ));
-
     // show a snackbar upon successful save
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Entry saved.')),
-    );
+    Future.delayed(Duration.zero, () {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Entry saved.')),
+      );
+    });
   }
 
   Future<void> _pickImage() async {
     final returnedImage = await ImagePicker().pickImage(source: ImageSource.gallery); // You can also use ImageSource.camera
-
     setState(() {
       _selectedImage = File(returnedImage!.path);
     });
+  } //_pickImage()
 
-    //_selectedImage != null ? Image.file(_selectedImage!) : const Text("Please select an image"),
-    /*
-    if (pickedFile != null) {
-      // Do something with the picked image file (e.g., update your FleatherField)
-      // Example: _controller.insertEmbed(Embed.image(pickedFile.path));
+  Future<void> _showColorPickerDialog() async {
+    Color selectedColor = await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Select Background Color'),
+          content: SingleChildScrollView(
+            child: MaterialPicker(
+              pickerColor: _selectedBackgroundColor,
+              onColorChanged: (Color color) {
+                setState(() {
+                  _selectedBackgroundColor = color;
+                });
+              },
+              enableLabel: true,
+            ),
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop(_selectedBackgroundColor);
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (selectedColor != null) {
+      setState(() {
+        _selectedBackgroundColor = selectedColor;
+      });
     }
-     */
-  }
+  } // _showColorPickerDialog()
 
   @override
   Widget build(BuildContext context) {
@@ -143,9 +160,10 @@ class _CreateJournalState extends State<CreateJournal> {
                   // Toolbar
                   Theme(
                     data: Theme.of(context).copyWith(
-                        disabledColor: Colors.red, //used for disabled icons
-                        primaryIconTheme: const IconThemeData(color: Colors.white70), //used for toggled icons
+                        canvasColor: const Color(0xFF879d55),
+                        primaryIconTheme: const IconThemeData(color: Colors.white), //used for toggled icons
                         iconTheme: const IconThemeData(color: Colors.black54)), //used for not toggled icons
+
                     child: FleatherToolbar.basic(
                       controller: _controller,
                       hideDirection: true,
@@ -155,18 +173,16 @@ class _CreateJournalState extends State<CreateJournal> {
                       hideCodeBlock: true,
                       hideInlineCode: true,
                       hideIndentation: true,
-                      hideHeadingStyle: true,
                       hideUndoRedo: true,
                     ),
                   ),
 
-                  // Fleather Journal Field
                   FleatherField(
                     controller: _controller,
                     focusNode: _focusNode,
                     decoration: InputDecoration(
                       filled: true,
-                      fillColor: Theme.of(context).colorScheme.primaryContainer,
+                      fillColor: _selectedBackgroundColor,
                       contentPadding: const EdgeInsets.symmetric(
                           horizontal: 15.0, vertical: 10.0),
                       hintText: 'How\'s your heart?',
@@ -188,13 +204,14 @@ class _CreateJournalState extends State<CreateJournal> {
       ),
       floatingActionButton: Stack(
         children: [
+          // SAVE BUTTON
           Positioned(
             bottom: 50,
             right: 0.0,
             child: FloatingActionButton(
               heroTag: 'saveButton',
               onPressed: () async {
-                await saveEntryField(_controller!.document);
+                await saveEntryField(_controller.document);
                 if (context.mounted) {
                   Navigator.pop(context);
                 }
@@ -202,6 +219,7 @@ class _CreateJournalState extends State<CreateJournal> {
               child: const Icon(Icons.save_as_sharp),
             ),
           ),
+          // UPLOAD IMAGE BUTTON
           Positioned(
             bottom: 120,
             right: 0,
@@ -211,6 +229,18 @@ class _CreateJournalState extends State<CreateJournal> {
                 _pickImage();
               },
               child: const Icon(Icons.upload),
+            ),
+          ),
+          // PICK BG COLOR BUTTON
+          Positioned(
+            bottom: 50,
+            left: 35,
+            child: FloatingActionButton(
+              heroTag: 'bgColor',
+              onPressed: () {
+                _showColorPickerDialog();
+              },
+              child: const Icon(Icons.color_lens_outlined),
             ),
           ),
         ],
