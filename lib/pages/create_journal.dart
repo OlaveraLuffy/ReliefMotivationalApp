@@ -30,7 +30,7 @@ class _CreateJournalState extends State<CreateJournal> {
   late FocusNode _focusNode;
   File ? _selectedImage;
 
-  late Color _selectedBackgroundColor = Theme.of(context).colorScheme.primaryContainer;
+  late Color _selectedBackgroundColor;
 
   @override
   void initState() {
@@ -38,6 +38,8 @@ class _CreateJournalState extends State<CreateJournal> {
     _titleController = TextEditingController();
     _controller = FleatherController();
     _focusNode = FocusNode();
+    journalEntry = JournalEntry();
+    _selectedBackgroundColor = const Color(0xFF879d55);
   }
 
   @override
@@ -45,17 +47,23 @@ class _CreateJournalState extends State<CreateJournal> {
     _titleController.dispose();
     _controller.dispose();
     _focusNode.dispose();
-
     super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    loadEntry();
   }
 
   Future<void> saveEntryField(ParchmentDocument document) async {
     final content = json.encode(document.toDelta().toList());
     await JournalDataManager.saveEntry(JournalEntry(
-        dateTime: journalEntry.dateTime,
-        title: _titleController.text,
-        content: content,
-        filePath: journalEntry.filePath
+      dateTime: journalEntry.dateTime,
+      title: _titleController.text,
+      content: content,
+      filePath: journalEntry.filePath,
+      backgroundColor: _selectedBackgroundColor.value,
     ));
     // show a snackbar upon successful save
     Future.delayed(Duration.zero, () {
@@ -65,51 +73,7 @@ class _CreateJournalState extends State<CreateJournal> {
     });
   }
 
-  Future<void> _pickImage() async {
-    final returnedImage = await ImagePicker().pickImage(source: ImageSource.gallery); // You can also use ImageSource.camera
-    setState(() {
-      _selectedImage = File(returnedImage!.path);
-    });
-  } //_pickImage()
-
-  Future<void> _showColorPickerDialog() async {
-    Color selectedColor = await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Select Background Color'),
-          content: SingleChildScrollView(
-            child: MaterialPicker(
-              pickerColor: _selectedBackgroundColor,
-              onColorChanged: (Color color) {
-                setState(() {
-                  _selectedBackgroundColor = color;
-                });
-              },
-              enableLabel: true,
-            ),
-          ),
-          actions: [
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop(_selectedBackgroundColor);
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
-
-    if (selectedColor != null) {
-      setState(() {
-        _selectedBackgroundColor = selectedColor;
-      });
-    }
-  } // _showColorPickerDialog()
-
-  @override
-  Widget build(BuildContext context) {
+  Future<void> loadEntry() async {
     final Map<String, dynamic>? arguments =
     ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
 
@@ -119,10 +83,58 @@ class _CreateJournalState extends State<CreateJournal> {
       ParchmentDocument? document;
       document = ParchmentDocument.fromJson(json.decode(journalEntry.content));
       _controller = FleatherController(document: document);
+      _selectedBackgroundColor = Color(journalEntry.backgroundColor);
     } else {
       journalEntry = JournalEntry();
     }
+  }
 
+  Future<void> _pickImage() async {
+    final returnedImage = await ImagePicker().pickImage(source: ImageSource.gallery); // You can also use ImageSource.camera
+    setState(() {
+      _selectedImage = File(returnedImage!.path);
+    });
+  }
+
+  Future<void> _showColorPickerDialog() async {
+    Color selectedColor = await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Select Background Color'),
+          content: SingleChildScrollView(
+            child: MaterialPicker(
+              pickerColor: _selectedBackgroundColor, //every click of color chosen
+              onColorChanged: (Color color) {
+                setState(() {
+                  _selectedBackgroundColor = color; //set state to color chosen
+                });
+              },
+              enableLabel: true,
+            ),
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop(); //accept or change color chosen once ok is clicked
+              },
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(const Color(0xFF879d55)),
+              ),
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+
+    setState(() {
+      _selectedBackgroundColor = selectedColor; //set the field color from the selected color
+    });
+  } // _showColorPickerDialog()
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: const ReliefAppBar(),
       body: Stack(

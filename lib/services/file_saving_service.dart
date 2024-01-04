@@ -74,44 +74,44 @@ void showAlert(BuildContext context, String msg) {
           ));
 }
 
-Future<void> saveJournalEntry(JournalEntry entry) async {
-
-  late File file;
-  late String filePath;
-
-  // prepare filename
-  String timeISOString = entry.dateTime!.toIso8601String();
-
-  // prepare data
-  String jsonString = jsonEncode({
-    'dateTime': timeISOString,
-    'title': entry.title,
-    'content': entry.content,
-  });
-
-  if (entry.filePath == null) {
-    String fileName = 'journal_$timeISOString';
-
-    // get the save directory
-    Directory appDir = await getApplicationDocumentsDirectory();
-    String saveDir = File(p.join(appDir.path, 'journal_entries')).path;
-
-    // create the save directory if it does not exist
-    Directory directory = await Directory(saveDir).create(recursive: true);
-    String filePath = p.join(appDir.path, 'journal_entries', fileName);
-    // write the string onto the file
-    file = File(filePath);
-    dev.log('created the directory: $directory');
-  } else {
-    filePath = entry.filePath!;
-    file = File(filePath);
-  }
-
-  await file
-      .writeAsString(jsonString)
-      .then((_) => dev.log('Journal entry written to file: $filePath'))
-      .catchError((error) => dev.log('Error writing to JSON file $error'));
-}
+// Future<void> saveJournalEntry(JournalEntry entry) async {
+//
+//   late File file;
+//   late String filePath;
+//
+//   // prepare filename
+//   String timeISOString = entry.dateTime!.toIso8601String();
+//
+//   // prepare data
+//   String jsonString = jsonEncode({
+//     'dateTime': timeISOString,
+//     'title': entry.title,
+//     'content': entry.content,
+//   });
+//
+//   if (entry.filePath == null) {
+//     String fileName = 'journal_$timeISOString';
+//
+//     // get the save directory
+//     Directory appDir = await getApplicationDocumentsDirectory();
+//     String saveDir = File(p.join(appDir.path, 'journal_entries')).path;
+//
+//     // create the save directory if it does not exist
+//     Directory directory = await Directory(saveDir).create(recursive: true);
+//     String filePath = p.join(appDir.path, 'journal_entries', fileName);
+//     // write the string onto the file
+//     file = File(filePath);
+//     dev.log('created the directory: $directory');
+//   } else {
+//     filePath = entry.filePath!;
+//     file = File(filePath);
+//   }
+//
+//   await file
+//       .writeAsString(jsonString)
+//       .then((_) => dev.log('FSS: Journal entry written to file: $filePath'))
+//       .catchError((error) => dev.log('Error writing to JSON file $error'));
+// }
 
 String limitStringLength({required String str, int length=100}) {
   if (str.length > length) {

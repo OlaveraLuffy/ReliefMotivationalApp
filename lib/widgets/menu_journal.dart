@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:com.relief.motivationalapp/models/journal_entry.dart';
 import 'package:com.relief.motivationalapp/services/journal_data_manager.dart';
@@ -107,8 +109,22 @@ class _Entry extends StatelessWidget {
 
   const _Entry({required this.journal, required this.updateEntries});
 
+  String extractReadableContent(List<dynamic> contentList) {
+    String journalContent = '';
+    for (dynamic contentItem in contentList) {
+      if (contentItem is Map<String, dynamic> && contentItem.containsKey("insert")) {
+        journalContent += contentItem["insert"].toString();
+      }
+    }
+    return journalContent;
+  }
+
   @override
   Widget build(BuildContext context) {
+    // Decode the JSON-encoded content
+    List<dynamic> decodedContent = json.decode(journal.content);
+    String journalContent = extractReadableContent(decodedContent);
+
     return TextButton(
       onPressed: () {
         Navigator.pushNamed(context, '/create_journal',
@@ -151,7 +167,7 @@ class _Entry extends StatelessWidget {
 
               // CONTENT TEXT
               Text(
-                limitStringLength(str: journal.content, length: 30),
+                limitStringLength(str: journalContent.trim(), length: 20),
                 textAlign: TextAlign.left,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: Theme.of(context).primaryColor,

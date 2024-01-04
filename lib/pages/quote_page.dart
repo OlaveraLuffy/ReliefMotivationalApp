@@ -167,7 +167,7 @@ class _QuotePageState extends State<QuotePage> {
                     child: Align(
                       alignment: Alignment.center,
                       child: Text(
-                        'Relief Motivational App\nby Diary ni Gracia',
+                        'Relief Motivational App\nby MGHS',
                         style: Theme.of(context).textTheme.titleSmall?.copyWith(
                           fontStyle: FontStyle.italic,
                           fontWeight: FontWeight.normal

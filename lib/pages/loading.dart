@@ -53,18 +53,16 @@ class _LoadingState extends State<Loading> with TickerProviderStateMixin {
       splashIconSize: 250,
       duration: 7000,
       animationDuration: const Duration(seconds: 1),
-      splashTransition: SplashTransition.fadeTransition,
-      pageTransitionType: PageTransitionType.topToBottom,
       screenFunction: () async{
         if(UserPrefs.isOnboarded){
-          //Navigator.push(context, PageTransition(type: PageTransitionType.fade, child: const Home()));
           return const Home();
         }
         else {
           return const Onboard();
         }
       },
-
+      splashTransition: SplashTransition.fadeTransition,
+      pageTransitionType: PageTransitionType.topToBottom,
     );
   }
 }

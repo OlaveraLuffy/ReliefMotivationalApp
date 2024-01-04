@@ -44,6 +44,7 @@ class JournalDataManager {
       'dateTime': timeISOString,
       'title': entry.title,
       'content': entry.content,
+      'backgroundColor': entry.backgroundColor,
     });
 
     // encrypt data
@@ -73,8 +74,8 @@ class JournalDataManager {
     file = File(filePath);
     await file
         .writeAsBytes(encryptedJson.bytes)
-        .then((_) => dev.log('Journal entry written to file: $filePath'))
-        .catchError((error) => dev.log('Error writing to JSON file $error'));
+        .then((_) => dev.log('JDG: Journal entry written to file: $filePath'))
+        .catchError((error) => dev.log('JDG: Error writing to JSON file $error'));
   }
 
   static Future<String> loadEntry(String filePath) async {
@@ -113,6 +114,7 @@ class JournalDataManager {
       dev.log('Journal directory not found');
     }
 
+    // load journal entries
     List<JournalEntry> loadJournalEntries = [];
     for (String filePath in filePaths) {
       try {
@@ -124,7 +126,8 @@ class JournalDataManager {
             title: jsonData['title'],
             content: jsonData['content'],
             dateTime: DateTime.parse(jsonData['dateTime']),
-            filePath: filePath
+            filePath: filePath,
+            backgroundColor: jsonData['backgroundColor'],
         ));
       } catch (e) {
         dev.log('Error reading JSON file: $e');
@@ -141,6 +144,7 @@ class JournalDataManager {
     return loadJournalEntries;
   }
 
+  // delete entries
   static Future<void> deleteEntry(String? filePath) async {
     if (filePath == null) {
       return;
@@ -150,9 +154,9 @@ class JournalDataManager {
 
     if (file.existsSync()) {
       file.deleteSync();
-      dev.log('journal entry $filePath deleted.');
+      dev.log('DELETED journal entry $filePath');
     } else {
-      dev.log('journal entry $filePath does not exist.');
+      dev.log('DOES NOT EXIST journal entry $filePath');
     }
   }
 }
