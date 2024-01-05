@@ -45,8 +45,8 @@ class _LoadingState extends State<Loading> with TickerProviderStateMixin {
     return AnimatedSplashScreen.withScreenFunction(
       splash: GifView.asset(
         'assets/videos/relief-loading.gif',
-        height: 200,
-        width: 200,
+        height: 400,
+        width: 400,
         frameRate: 60,
       ),
       backgroundColor: Colors.white,
@@ -62,7 +62,7 @@ class _LoadingState extends State<Loading> with TickerProviderStateMixin {
         }
       },
       splashTransition: SplashTransition.fadeTransition,
-      pageTransitionType: PageTransitionType.topToBottom,
+      pageTransitionType: PageTransitionType.leftToRightWithFade, //doesnt work, just blinks to next page
     );
   }
 }

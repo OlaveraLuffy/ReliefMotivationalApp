@@ -45,6 +45,7 @@ class JournalDataManager {
       'title': entry.title,
       'content': entry.content,
       'backgroundColor': entry.backgroundColor,
+      'imagePath': entry.imagePath,
     });
 
     // encrypt data
@@ -128,6 +129,7 @@ class JournalDataManager {
             dateTime: DateTime.parse(jsonData['dateTime']),
             filePath: filePath,
             backgroundColor: jsonData['backgroundColor'],
+            imagePath: jsonData['imagePath'],
         ));
       } catch (e) {
         dev.log('Error reading JSON file: $e');

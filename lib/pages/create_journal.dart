@@ -29,8 +29,8 @@ class _CreateJournalState extends State<CreateJournal> {
   late FleatherController _controller;
   late FocusNode _focusNode;
   File ? _selectedImage;
-
   late Color _selectedBackgroundColor;
+  late String _selectedImagePath;
 
   @override
   void initState() {
@@ -40,6 +40,7 @@ class _CreateJournalState extends State<CreateJournal> {
     _focusNode = FocusNode();
     journalEntry = JournalEntry();
     _selectedBackgroundColor = const Color(0xFF879d55);
+    _selectedImagePath = '';
   }
 
   @override
@@ -64,6 +65,7 @@ class _CreateJournalState extends State<CreateJournal> {
       content: content,
       filePath: journalEntry.filePath,
       backgroundColor: _selectedBackgroundColor.value,
+      imagePath: _selectedImagePath,
     ));
     // show a snackbar upon successful save
     Future.delayed(Duration.zero, () {
@@ -84,6 +86,12 @@ class _CreateJournalState extends State<CreateJournal> {
       document = ParchmentDocument.fromJson(json.decode(journalEntry.content));
       _controller = FleatherController(document: document);
       _selectedBackgroundColor = Color(journalEntry.backgroundColor);
+
+      if (journalEntry.imagePath != null && journalEntry.imagePath!.isNotEmpty) {
+        _selectedImage = File(journalEntry.imagePath!);
+        _selectedImagePath = journalEntry.imagePath!;
+      }
+
     } else {
       journalEntry = JournalEntry();
     }
@@ -92,12 +100,13 @@ class _CreateJournalState extends State<CreateJournal> {
   Future<void> _pickImage() async {
     final returnedImage = await ImagePicker().pickImage(source: ImageSource.gallery); // You can also use ImageSource.camera
     setState(() {
-      _selectedImage = File(returnedImage!.path);
+      _selectedImage = File(returnedImage!.path); // _selectedImage actual output of selected image
+      _selectedImagePath = returnedImage.path; // convert to String of returnedImage.path to be able to save
     });
   }
 
   Future<void> _showColorPickerDialog() async {
-    Color selectedColor = await showDialog(
+    Color? selectedColor = await showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -128,9 +137,11 @@ class _CreateJournalState extends State<CreateJournal> {
       },
     );
 
-    setState(() {
-      _selectedBackgroundColor = selectedColor; //set the field color from the selected color
-    });
+    if (selectedColor != null) {
+      setState(() {
+        _selectedBackgroundColor = selectedColor;
+      });
+    }
   } // _showColorPickerDialog()
 
   @override
@@ -204,8 +215,10 @@ class _CreateJournalState extends State<CreateJournal> {
                   ),
 
                   const SizedBox(height: 10),
+                  _selectedImage != null
+                      ? Image.file(_selectedImage!)
+                      : const Text("Please select an image"),
 
-                  _selectedImage != null ? Image.file(_selectedImage!) : const Text("Please select an image"),
                 ],
               ),
             ),
