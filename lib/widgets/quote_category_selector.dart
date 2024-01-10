@@ -5,6 +5,8 @@ import 'package:com.relief.motivationalapp/services/user_preferences.dart';
 import 'package:com.relief.motivationalapp/services/file_saving_service.dart';
 import 'package:com.relief.motivationalapp/widgets/quote_category.dart';
 
+import 'dart:developer' as dev;
+
 class QuoteCategoryToggler extends StatefulWidget {
   const QuoteCategoryToggler({super.key});
 
@@ -18,14 +20,26 @@ class _QuoteCategoryTogglerState extends State<QuoteCategoryToggler> {
   late Map<String, bool> categoriesToggle;
 
   Future<void> _toggleQuoteCategoryUserPrefs(String category, bool value) async {
+    List<String> enabledCategoriesBeforeToggle = UserPrefs.getEnabledQuoteCategories();
+
+    // Toggle the category
     UserPrefs.setQuoteCategory(category, value);
+
+    List<String> enabledCategoriesAfterToggle = UserPrefs.getEnabledQuoteCategories();
+
+    if (!value && enabledCategoriesAfterToggle.isEmpty) {
+      // If the category is being toggled off and no categories are left,
+      // prevent the last remaining category from being deselected.
+      UserPrefs.setQuoteCategory(category, true);
+    }
+
     List<String> enabledCategories = UserPrefs.getEnabledQuoteCategories();
     late Quote quote;
     if (enabledCategories.isNotEmpty) {
-      String category = getRandomItem(enabledCategories);
-      quote = QuoteDataManager.getRandomQuote(category);
+      String randomCategory = getRandomItem(enabledCategories);
+      quote = QuoteDataManager.getRandomQuote(randomCategory);
     } else {
-      quote = Quote();
+      quote = Quote(category: "Default Category", author: "Default Author", quote: "Default Quote");
     }
     setState(() {
       UserPrefs.updateQotd(quote);
@@ -43,9 +57,10 @@ class _QuoteCategoryTogglerState extends State<QuoteCategoryToggler> {
   Widget build(BuildContext context) {
     return ExpansionPanelList(
       elevation: 0.0,
+      expandedHeaderPadding: EdgeInsets.zero,
       expansionCallback: (int index, bool isExpanded) {
         setState(() {
-          _isExpanded = !isExpanded;
+          _isExpanded = !_isExpanded;
         });
       },
       children: [
@@ -77,13 +92,17 @@ class _QuoteCategoryTogglerState extends State<QuoteCategoryToggler> {
                   children: [
                     Expanded(child: Text(categoryStr)),
                     Switch(
-                        value: categoriesToggle[category] ?? true,
-                        onChanged: (bool value) {
-                          setState(() {
-                            categoriesToggle[category] = value;
-                            _toggleQuoteCategoryUserPrefs(category, value);
-                          });
-                        }),
+                      value: categoriesToggle[category] ?? true,
+                      onChanged: (bool value) {
+                        setState(() {
+                          categoriesToggle[category] = value;
+                          _toggleQuoteCategoryUserPrefs(category, value);
+                        });
+                      },
+                      activeColor: Colors.white,
+                      inactiveTrackColor: Colors.grey,
+                      inactiveThumbColor: Colors.white,
+                    ),
                   ],
                 ),
               ]);

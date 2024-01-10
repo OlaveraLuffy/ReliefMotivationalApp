@@ -7,6 +7,9 @@ import 'package:com.relief.motivationalapp/services/user_preferences.dart';
 import 'package:com.relief.motivationalapp/pages/home.dart';
 import 'package:gif_view/gif_view.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:video_player/video_player.dart';
+
+import 'dart:developer' as dev;
 
 class Loading extends StatefulWidget {
   const Loading({super.key});
@@ -16,7 +19,7 @@ class Loading extends StatefulWidget {
 }
 
 class _LoadingState extends State<Loading> with TickerProviderStateMixin {
-
+  late VideoPlayerController _videoController;
   late AudioPlayer _audioPlayer;
 
   @override
@@ -28,6 +31,7 @@ class _LoadingState extends State<Loading> with TickerProviderStateMixin {
   @override
   void dispose() {
     _audioPlayer.dispose();
+    _videoController.dispose();
     super.dispose();
   }
 
@@ -35,8 +39,15 @@ class _LoadingState extends State<Loading> with TickerProviderStateMixin {
     await _audioPlayer.play(AssetSource('audio/fairy-glitter.wav'));
   }
 
+  Future<void> _playVideo() async {
+    _videoController = VideoPlayerController.asset('assets/videos/Background.mp4');
+    await _videoController.play();
+    dev.log('video play');
+  }
+
   @override
   Widget build(BuildContext context) {
+    _playVideo();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       Future.delayed(const Duration(seconds: 2), (){
         _playAudio();
@@ -49,6 +60,7 @@ class _LoadingState extends State<Loading> with TickerProviderStateMixin {
         width: 400,
         frameRate: 60,
       ),
+
       backgroundColor: Colors.white,
       splashIconSize: 250,
       duration: 7000,

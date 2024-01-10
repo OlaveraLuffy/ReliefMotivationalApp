@@ -1,9 +1,12 @@
+import 'package:com.relief.motivationalapp/services/quotes_data_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:com.relief.motivationalapp/services/email_service.dart';
 import 'package:com.relief.motivationalapp/services/notifications.dart';
 import 'package:com.relief.motivationalapp/services/user_preferences.dart';
 import 'package:com.relief.motivationalapp/widgets/appbar.dart';
 import 'package:com.relief.motivationalapp/widgets/quote_category_selector.dart';
+
+import 'package:com.relief.motivationalapp/models/quote.dart';
 
 class Settings extends StatefulWidget {
   const Settings({super.key});
@@ -38,6 +41,17 @@ class _SettingsState extends State<Settings> {
               const _About(),
               const _Feedback(),
               const _Legal(),
+              
+              const SizedBox(height:20),
+              // ElevatedButton(
+              //   onPressed: () {
+              //     //Notifications.scheduleNotification(time: TimeOfDay.now());
+              //
+              //     Notifications.sendNotification(
+              //         destinationRoute: '/create_journal');
+              //   },
+              //   child: const Text('Test Notification'),
+              // )
             ],
           ),
         ),
@@ -100,6 +114,17 @@ class _RcvNotifsState extends State<_RcvNotifs> {
     } else {
       Notifications.cancelScheduledNotification(0);
     }
+
+    UserPrefs.setReceiveNotifications(receiveNotifications);
+
+  }
+
+  @override
+  void initState()
+  {
+    super.initState();
+    receiveNotifications = UserPrefs.getReceiveNotifications();
+    selectedTime = UserPrefs.getNotifTime();
   }
 
   @override
@@ -123,7 +148,11 @@ class _RcvNotifsState extends State<_RcvNotifs> {
                     receiveNotifications = value;
                     _toggleDailyNotifs();
                   });
-                }),
+                },
+              activeColor: Colors.white,
+              inactiveTrackColor: Colors.grey,
+              inactiveThumbColor: Colors.white,
+            ),
           ],
         ),
         Builder(builder: (context) {

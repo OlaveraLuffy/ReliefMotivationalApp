@@ -1,3 +1,6 @@
+import 'dart:ffi';
+
+import 'package:com.relief.motivationalapp/widgets/quote_category.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:com.relief.motivationalapp/models/journal_entry.dart';
@@ -185,7 +188,7 @@ class _CreateJournalState extends State<CreateJournal> {
                     data: Theme.of(context).copyWith(
                         canvasColor: const Color(0xFF879d55),
                         primaryIconTheme: const IconThemeData(color: Colors.white), //used for toggled icons
-                        iconTheme: const IconThemeData(color: Colors.black54)), //used for not toggled icons
+                        iconTheme: const IconThemeData(color: Colors.black54, size: 100.0)), //used for not toggled icons
 
                     child: FleatherToolbar.basic(
                       controller: _controller,
@@ -219,6 +222,32 @@ class _CreateJournalState extends State<CreateJournal> {
                       ? Image.file(_selectedImage!)
                       : const Text("Please select an image"),
 
+                  const SizedBox(height: 10),
+
+                  Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center, // Center the row horizontally
+                      children: [
+                        FloatingActionButton(
+                          heroTag: 'share',
+                          onPressed: () {
+                            // Handle the 'share' button press
+                          },
+                          mini: true, // Set to true to make the button smaller
+                          child: const Icon(Icons.share),
+                        ),
+                        const SizedBox(width: 16.0), // Add some spacing between the buttons
+                        FloatingActionButton(
+                          heroTag: 'saveToDevice',
+                          onPressed: () {
+                            // Handle the 'saveToDevice' button press
+                          },
+                          mini: true, // Set to true to make the button smaller
+                          child: const Icon(Icons.download_for_offline),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),

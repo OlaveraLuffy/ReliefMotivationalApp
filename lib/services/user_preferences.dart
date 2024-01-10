@@ -5,15 +5,18 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:developer' as dev;
 
 class UserPrefs {
-
   static late final SharedPreferences _prefs;
   static late bool isOnboarded;
   static late bool recvNotifs;
+
+  static late TimeOfDay notifTime;
 
   static Future<void> init() async {
     _prefs = await SharedPreferences.getInstance();
     isOnboarded = _prefs.getBool('isOnboarded') != true ? false : true;
     recvNotifs = _prefs.getBool('recvNotifs') != true ? false : true;
+
+    notifTime = getNotifTime(); //Fetch initial notification time
   }
 
   static Future<void> resetPrefs() async {
@@ -107,5 +110,13 @@ class UserPrefs {
 
   static void setQuoteCategory(String category, bool value) async {
     _prefs.setBool(category, value);
+  }
+
+  static bool getReceiveNotifications() {
+    return _prefs.getBool('recvNotifs') ?? false;
+  }
+
+  static void setReceiveNotifications(bool value) async {
+    _prefs.setBool('recvNotifs', value);
   }
 }

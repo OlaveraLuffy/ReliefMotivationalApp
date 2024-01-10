@@ -10,6 +10,7 @@ import 'package:com.relief.motivationalapp/main.dart';
 import 'dart:developer' as dev;
 
 class Notifications {
+
   static final FlutterLocalNotificationsPlugin notifPlugin =
       FlutterLocalNotificationsPlugin();
   static const NotificationDetails notifDetails = NotificationDetails(
@@ -19,6 +20,7 @@ class Notifications {
           sound: RawResourceAndroidNotificationSound('fairy_glitter'),
           playSound: true,
           enableVibration: true,
+          styleInformation: BigTextStyleInformation(''),
           icon: '@mipmap/relief'));
 
   static Future<void> init() async {
@@ -43,6 +45,8 @@ class Notifications {
 
   static Future<void> onDidReceiveNotificationResponse(
       NotificationResponse response) async {
+    dev.log('onDidReceiveNotificationResponse');
+
     String? route = response.payload != '' ? response.payload : null;
     if (route != null) {
       if (route == '/create_journal') {
@@ -58,12 +62,43 @@ class Notifications {
     }
   }
 
-  static Future<void> sendNotification({String? destinationRoute}) async {
-    await notifPlugin.show(0, 'Relief',
-        'How was your day? It\'s time for your daily journal!', notifDetails,
-        payload: destinationRoute);
+  static bool isLeapYear(int year)
+  {
+    if(year % 4 != 0){
+      return false;
+    }
+    if (year % 100 == 0 && year % 400 != 0){
+      return false;
+    }
+
+    return true;
   }
 
+
+  // //TEST BUTTON NOTIFICATION
+  // static Future<void> sendNotification({
+  //   String? destinationRoute,
+  // }) async {
+  //   Quote randomQuote = QuoteDataManager.getRandomQuote();
+  //   DateTime now = DateTime.now();
+  //   int dayOfYear = now.difference(DateTime(now.year, 1, 1)).inDays + 1;
+  //   int year = now.year;
+  //   int totalDaysInYear = isLeapYear(year) ? 366 : 365;
+  //   String notificationTitle = 'Day $dayOfYear of $totalDaysInYear: ${randomQuote.category} by ${randomQuote.author}';
+  //   await notifPlugin.show(
+  //       0,
+  //       notificationTitle,
+  //       randomQuote.quote,
+  //       notifDetails,
+  //       payload: destinationRoute,
+  //   );
+  //
+  //   // await notifPlugin.show(0, 'Relief',
+  //   //     'How was your day? It\'s time for your daily journal! (Send Notification)', notifDetails,
+  //   //     payload: destinationRoute);
+  // }
+
+  // SETTINGS NOTIFICATION
   static Future<void> scheduleNotification(
       {required TimeOfDay time, String? destinationRoute}) async {
     DateTime now = DateTime.now();
@@ -79,10 +114,16 @@ class Notifications {
     tz.TZDateTime tzScheduledTime =
         tz.TZDateTime.now(tz.local).add(timeBeforeNotif);
 
+    Quote randomQuote = QuoteDataManager.getRandomQuote();
+    int dayOfYear = now.difference(DateTime(now.year, 1, 1)).inDays + 1;
+    int year = now.year;
+    int totalDaysInYear = isLeapYear(year) ? 366 : 365;
+    String notificationTitle = 'Day $dayOfYear of $totalDaysInYear: ${randomQuote.category} by ${randomQuote.author}';
+    String notificationContent = '${randomQuote.quote} \n\nClick to write your journal entry now.';
     await notifPlugin.zonedSchedule(
         0,
-        'Relief',
-        'How was your day? It\'s time for your daily journal!',
+        notificationTitle,
+        notificationContent,
         tzScheduledTime,
         notifDetails,
         androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
@@ -95,6 +136,7 @@ class Notifications {
     await notifPlugin.cancel(id);
   }
 
+  // HOME PAGE SCHEDULED QUOTE NOTIFICATION
   static void scheduleMultipleNotifs({
     required int numOfNotifs,
     required TimeOfDay startTime,
@@ -118,6 +160,13 @@ class Notifications {
       scheduledTime = scheduledTime.add(const Duration(days: 1));
     }
 
+    Quote randomQuote = QuoteDataManager.getRandomQuote();
+    int dayOfYear = now.difference(DateTime(now.year, 1, 1)).inDays + 1;
+    int year = now.year;
+    int totalDaysInYear = isLeapYear(year) ? 366 : 365;
+    String notificationTitle = 'Day $dayOfYear of $totalDaysInYear: ${randomQuote.category} by ${randomQuote.author}';
+    String notificationContent = '${randomQuote.quote} \n\nClick to write your journal entry now.';
+
     for (int i = 1; i <= numOfNotifs; i++) {
       Duration timeBeforeNotif = scheduledTime.difference(now);
       Duration offset = Duration(hours: hoursBetweenNotifs * (i - 1));
@@ -126,14 +175,14 @@ class Notifications {
       await notifPlugin
           .zonedSchedule(
               i,
-              'Relief - Scheduled Quotes',
-              customMsg == '' ? 'Time for your scheduled quote!' : customMsg,
+              notificationTitle,
+              customMsg == '' ? notificationContent : customMsg,
               tzScheduledTime,
               notifDetails,
               androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
               uiLocalNotificationDateInterpretation:
                   UILocalNotificationDateInterpretation.absoluteTime,
-              payload: '/quote')
+              payload: '/create_journal')
           .then((value) {
         dev.log('notification scheduled at $tzScheduledTime');
       });
