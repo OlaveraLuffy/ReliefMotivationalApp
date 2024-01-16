@@ -168,7 +168,7 @@ class _QuoteCard extends StatelessWidget {
                           child: IconButton(
                               onPressed: () {
                                 saveQuoteImage(quote).then((info) {
-                                if (info['success']) {
+                                if (info['isSuccess']) {
                                   showAlert(context, 'Image Saved!');
                                 } else {
                                   showAlert(context, 'Unable to save image. Please allow the app to enable image saving through your device\'s settings.');

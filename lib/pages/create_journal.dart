@@ -1,6 +1,3 @@
-import 'dart:ffi';
-
-import 'package:com.relief.motivationalapp/widgets/quote_category.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:com.relief.motivationalapp/models/journal_entry.dart';
@@ -12,12 +9,16 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:fleather/fleather.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-
 import 'package:com.relief.motivationalapp/theme/theme_constants.dart';
 import 'package:video_player/video_player.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:developer' as dev;
 import 'package:quill_delta/quill_delta.dart';
+import 'dart:ffi';
+import 'package:com.relief.motivationalapp/widgets/quote_category.dart';
+
+import 'package:com.relief.motivationalapp/services/file_saving_service.dart';
+import 'package:com.relief.motivationalapp/pages/journal_page.dart';
 
 class CreateJournal extends StatefulWidget {
   const CreateJournal({super.key});
@@ -147,6 +148,15 @@ class _CreateJournalState extends State<CreateJournal> {
     }
   } // _showColorPickerDialog()
 
+  Future<void> _openPage() async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => JournalPage(journalEntry: journalEntry),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -230,8 +240,10 @@ class _CreateJournalState extends State<CreateJournal> {
                       children: [
                         FloatingActionButton(
                           heroTag: 'share',
-                          onPressed: () {
-                            // Handle the 'share' button press
+                          onPressed: () async {
+                            // Handle the 'openPage' button press
+                            dev.log('pressed');
+                            _openPage();
                           },
                           mini: true, // Set to true to make the button smaller
                           child: const Icon(Icons.share),
@@ -241,6 +253,8 @@ class _CreateJournalState extends State<CreateJournal> {
                           heroTag: 'saveToDevice',
                           onPressed: () {
                             // Handle the 'saveToDevice' button press
+                            dev.log('pressed');
+
                           },
                           mini: true, // Set to true to make the button smaller
                           child: const Icon(Icons.download_for_offline),
@@ -302,3 +316,5 @@ class _CreateJournalState extends State<CreateJournal> {
     );
   }
 }
+
+
