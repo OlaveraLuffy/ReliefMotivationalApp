@@ -5,8 +5,6 @@ import 'package:com.relief.motivationalapp/services/user_preferences.dart';
 import 'package:com.relief.motivationalapp/services/file_saving_service.dart';
 import 'package:com.relief.motivationalapp/widgets/quote_category.dart';
 
-import 'dart:developer' as dev;
-
 class QuoteCategoryToggler extends StatefulWidget {
   const QuoteCategoryToggler({super.key});
 
@@ -20,8 +18,6 @@ class _QuoteCategoryTogglerState extends State<QuoteCategoryToggler> {
   late Map<String, bool> categoriesToggle;
 
   Future<void> _toggleQuoteCategoryUserPrefs(String category, bool value) async {
-    List<String> enabledCategoriesBeforeToggle = UserPrefs.getEnabledQuoteCategories();
-
     // Toggle the category
     UserPrefs.setQuoteCategory(category, value);
 

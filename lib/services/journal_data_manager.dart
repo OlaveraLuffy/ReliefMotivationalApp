@@ -33,7 +33,7 @@ class JournalDataManager {
 
   static Future<void> saveEntry(JournalEntry entry) async {
 
-    String timeISOString = entry.dateTime!.toIso8601String();
+    String timeISOString = entry.dateTime.toIso8601String();
 
     // get encryption key
     final String encryptionKey = await retrieveEncryptionKey();
@@ -138,8 +138,8 @@ class JournalDataManager {
 
     // sort by dateTime
     loadJournalEntries.sort((JournalEntry a, JournalEntry b) {
-      DateTime firstDateTime = a.dateTime as DateTime;
-      DateTime secondDateTime = b.dateTime as DateTime;
+      DateTime firstDateTime = a.dateTime;
+      DateTime secondDateTime = b.dateTime;
       return secondDateTime.compareTo(firstDateTime);
     });
 

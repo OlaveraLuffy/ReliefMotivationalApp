@@ -1,12 +1,9 @@
-import 'package:com.relief.motivationalapp/services/quotes_data_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:com.relief.motivationalapp/services/email_service.dart';
 import 'package:com.relief.motivationalapp/services/notifications.dart';
 import 'package:com.relief.motivationalapp/services/user_preferences.dart';
 import 'package:com.relief.motivationalapp/widgets/appbar.dart';
 import 'package:com.relief.motivationalapp/widgets/quote_category_selector.dart';
-
-import 'package:com.relief.motivationalapp/models/quote.dart';
 
 class Settings extends StatefulWidget {
   const Settings({super.key});

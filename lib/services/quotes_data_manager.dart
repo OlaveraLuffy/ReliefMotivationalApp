@@ -4,8 +4,6 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:com.relief.motivationalapp/models/quote.dart';
 
-import 'dart:developer' as dev;
-
 class QuoteDataManager {
 
   static Map<String, List<Quote>> _quotes = {};

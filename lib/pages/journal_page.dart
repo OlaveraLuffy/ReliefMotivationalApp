@@ -1,21 +1,33 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:com.relief.motivationalapp/widgets/appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:com.relief.motivationalapp/models/journal_entry.dart';
 import 'package:fleather/fleather.dart';
 import 'package:com.relief.motivationalapp/services/file_saving_service.dart';
 
-class JournalPage extends StatelessWidget {
+class JournalPage extends StatefulWidget {
   final JournalEntry journalEntry;
+  final bool isScreenshot;
 
-  const JournalPage({Key? key, required this.journalEntry}) : super(key: key);
+  const JournalPage({
+    super.key,
+    required this.journalEntry,
+    this.isScreenshot = false,
+  });
+
+  @override
+  State<JournalPage> createState() => _JournalPageState();
+}
+
+class _JournalPageState extends State<JournalPage> {
+
+  late JournalEntry journalEntry;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Share Journal'),
-      ),
+      appBar: ReliefAppBar(isScreenshot: widget.isScreenshot),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -24,7 +36,7 @@ class JournalPage extends StatelessWidget {
             children: [
               // Display title
               Text(
-                journalEntry.title,
+                widget.journalEntry.title,
                 style: const TextStyle(
                   fontSize: 24.0,
                   color: Colors.black,
@@ -37,33 +49,38 @@ class JournalPage extends StatelessWidget {
               // Display rich text
               RichTextField(
                 controller: FleatherController(
-                  document: ParchmentDocument.fromJson(json.decode(journalEntry.content)),
+                  document: ParchmentDocument.fromJson(json.decode(widget.journalEntry.content)),
                 ),
-                backgroundColor: Color(journalEntry.backgroundColor),
+                backgroundColor: Color(widget.journalEntry.backgroundColor),
               ),
 
               const SizedBox(height: 10.0),
 
               // Display image if available
-              if (journalEntry.imagePath != null && journalEntry.imagePath!.isNotEmpty)
-                Image.file(File(journalEntry.imagePath!)),
+              if (widget.journalEntry.imagePath != null &&
+                  widget.journalEntry.imagePath!.isNotEmpty)
+                Image.file(File(widget.journalEntry.imagePath!)),
 
               const SizedBox(height: 10.0),
 
+
               TextButton(
-                  onPressed: () async {
-                    await saveAndShareJournal(journalEntry);
-                  },
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(const Color(0xFF879d55)),
+                onPressed: () async {
+                  await saveAndShareJournal(widget.journalEntry);
+                },
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(const Color(0xFF879d55)),
+                ),
+                child: const Text(
+                  'Share',
+                  style: TextStyle(
+                    color: Colors.white,
                   ),
-                  child: const Text(
-                    'Share',
-                    style: TextStyle(
-                      color: Colors.white,
-                    ),
-                  )
+                ),
               ),
+
+
+
             ],
           ),
         ),
@@ -92,7 +109,7 @@ class RichTextField extends StatelessWidget {
         contentPadding: const EdgeInsets.symmetric(
             horizontal: 15.0, vertical: 10.0
         ),
-        hintText: 'How\'s your heart?',
+        hintText: 'Empty',
         hintStyle: Theme.of(context).textTheme.titleMedium!.copyWith(
             color: Theme.of(context).colorScheme.onPrimaryContainer
         ),
