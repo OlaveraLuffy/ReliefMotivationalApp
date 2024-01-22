@@ -26,8 +26,8 @@ void main() async {
   await JournalDataManager.init();
   await Notifications.init();
   await UserPrefs.init();
-  // TODO: enable ads here on production
-  //AdService.init();
+  // TODO: enable ads here on production, change also the id in build.gradle
+  AdService.init();
   runApp(ReliefApp());
 }
 

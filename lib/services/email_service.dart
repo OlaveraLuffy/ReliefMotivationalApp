@@ -1,7 +1,7 @@
 import 'package:url_launcher/url_launcher.dart';
 
 class ExternalUrlService {
-  static const String supportEmail = 'diarynigracia@gmail.com';
+  static const String supportEmail = 'mghs.arielmu@gmail.com';
   static const String emailSubject = 'Relief Problem Report';
 
   static void sendEmail(String content) async {

@@ -74,30 +74,6 @@ class Notifications {
     return true;
   }
 
-
-  // //TEST BUTTON NOTIFICATION
-  // static Future<void> sendNotification({
-  //   String? destinationRoute,
-  // }) async {
-  //   Quote randomQuote = QuoteDataManager.getRandomQuote();
-  //   DateTime now = DateTime.now();
-  //   int dayOfYear = now.difference(DateTime(now.year, 1, 1)).inDays + 1;
-  //   int year = now.year;
-  //   int totalDaysInYear = isLeapYear(year) ? 366 : 365;
-  //   String notificationTitle = 'Day $dayOfYear of $totalDaysInYear: ${randomQuote.category} by ${randomQuote.author}';
-  //   await notifPlugin.show(
-  //       0,
-  //       notificationTitle,
-  //       randomQuote.quote,
-  //       notifDetails,
-  //       payload: destinationRoute,
-  //   );
-  //
-  //   // await notifPlugin.show(0, 'Relief',
-  //   //     'How was your day? It\'s time for your daily journal! (Send Notification)', notifDetails,
-  //   //     payload: destinationRoute);
-  // }
-
   // SETTINGS NOTIFICATION
   static Future<void> scheduleNotification(
       {required TimeOfDay time, String? destinationRoute}) async {

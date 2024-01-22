@@ -131,37 +131,48 @@ class _SchedulingMenuState extends State<_SchedulingMenu> {
     if (context.mounted) {
       if (numOfScheduledNotifs > 0) {
         showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: const Text('Confirmation'),
-                content: const Text(
-                    "Are you sure you want to schedule new notifications?\nThis will clear your previous set notifications."),
-                actions: [
-                  TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: Text(
-                        'Cancel',
-                        style: TextStyle(
-                            color: Theme.of(context).colorScheme.onBackground),
-                      )),
-                  TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        setState(() {
-                          creatingSchedule = true;
-                        });
-                      },
-                      child: Text(
-                        'Continue',
-                        style: TextStyle(
-                            color: Theme.of(context).colorScheme.onBackground),
-                      )),
-                ],
-              );
-            });
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Confirmation'),
+              content: const Text(
+                "Are you sure you want to schedule new notifications?\nThis will clear your previous set notifications.",
+                style: TextStyle(
+                  // Customize text color
+                  color: Colors.white, // Change to your desired text color
+                ),
+              ),
+              backgroundColor: const Color(0xFF879d55), // Change to your desired background color
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text(
+                    'Cancel',
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    setState(() {
+                      creatingSchedule = true;
+                    });
+                  },
+                  child: const Text(
+                    'Continue',
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
       } else {
         setState(() {
           creatingSchedule = true;
@@ -169,6 +180,7 @@ class _SchedulingMenuState extends State<_SchedulingMenu> {
       }
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
