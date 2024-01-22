@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:com.relief.motivationalapp/widgets/appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:com.relief.motivationalapp/models/journal_entry.dart';
 import 'package:fleather/fleather.dart';
@@ -21,13 +20,17 @@ class JournalPage extends StatefulWidget {
 }
 
 class _JournalPageState extends State<JournalPage> {
-
   late JournalEntry journalEntry;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: ReliefAppBar(isScreenshot: widget.isScreenshot),
+      appBar: AppBar(
+        centerTitle: true,
+          title: Image.asset(
+        'assets/images/icons/relief.png',
+        height: 40.0),
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -60,25 +63,40 @@ class _JournalPageState extends State<JournalPage> {
               if (widget.journalEntry.imagePath != null &&
                   widget.journalEntry.imagePath!.isNotEmpty)
                 Image.file(File(widget.journalEntry.imagePath!)),
-
               const SizedBox(height: 10.0),
 
-
-              TextButton(
-                onPressed: () async {
-                  await saveAndShareJournal(widget.journalEntry);
-                },
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(const Color(0xFF879d55)),
-                ),
-                child: const Text(
-                  'Share',
-                  style: TextStyle(
-                    color: Colors.white,
+              // Conditionally display the Share button
+              if (!widget.isScreenshot)
+                TextButton(
+                  onPressed: () async {
+                    await saveAndShareJournal(widget.journalEntry);
+                  },
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(const Color(0xFF879d55)),
+                  ),
+                  child: const Text(
+                    'Share',
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
                   ),
                 ),
-              ),
-
+              // Conditionally display text for screenshot mode
+              if (widget.isScreenshot)
+                SizedBox(
+                  height: 105.0,
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Text(
+                      'Relief Motivational App\nby MGHS',
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontStyle: FontStyle.italic,
+                        fontWeight: FontWeight.normal,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
 
 
             ],

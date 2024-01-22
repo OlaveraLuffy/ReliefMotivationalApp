@@ -25,7 +25,7 @@ class _BannerAdDispState extends State<BannerAdDisp> with TickerProviderStateMix
   final AdSize adSize = const AdSize(width: 320, height: 50);
   static BannerAd? _bannerAd;
   bool _isLoaded = false;
-  // TODO: change to production adUnitID
+  // TODO: change to production adUnitID, also change in android/app/src/AndroidManifest.xml
   //final bannerAdUnitId = 'ca-app-pub-8634651641429291/2517842118'; // production banner adUnitID
    final bannerAdUnitId = 'ca-app-pub-3940256099942544/6300978111'; // test banner adUnitId
 

@@ -36,26 +36,26 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: const ReliefAppBar(),
-        body: Stack(
-          children: [
-            const SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Qotd(),
-                  HomeCategoriesPicker(),
-                  QuoteScheduler(),
-                  MenuJournal(),
-                  SizedBox(height: 80,)
-                ],
-              ),
+      appBar: const ReliefAppBar(),
+      body: Stack(
+        children: [
+          const SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Qotd(),
+                HomeCategoriesPicker(),
+                QuoteScheduler(),
+                MenuJournal(),
+                SizedBox(height: 80,)
+              ],
             ),
-            AdService.bannerAd
-          ],
-        ),
-        bottomNavigationBar: const MusicPlayer(),
+          ),
+          AdService.bannerAd
+        ],
+      ),
+      bottomNavigationBar: const MusicPlayer(),
     );
   }
 }

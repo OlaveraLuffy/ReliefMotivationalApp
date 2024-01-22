@@ -5,6 +5,8 @@ import 'package:com.relief.motivationalapp/services/user_preferences.dart';
 import 'package:com.relief.motivationalapp/widgets/appbar.dart';
 import 'package:com.relief.motivationalapp/widgets/quote_category_selector.dart';
 
+import 'dart:developer' as dev;
+
 class Settings extends StatefulWidget {
   const Settings({super.key});
 
@@ -40,15 +42,18 @@ class _SettingsState extends State<Settings> {
               const _Legal(),
               
               const SizedBox(height:20),
+
+              // // TODO: delete this on production/done testing
               // ElevatedButton(
-              //   onPressed: () {
+              //   onPressed: () async {
               //     //Notifications.scheduleNotification(time: TimeOfDay.now());
-              //
-              //     Notifications.sendNotification(
-              //         destinationRoute: '/create_journal');
+              //     dev.log('pressed');
+              //     await Notifications.sendNotification();
               //   },
               //   child: const Text('Test Notification'),
               // )
+              // //////////////////////////////////////////////////
+
             ],
           ),
         ),
@@ -133,7 +138,7 @@ class _RcvNotifsState extends State<_RcvNotifs> {
             Flexible(
               fit: FlexFit.tight,
               child: Text(
-                'RECEIVE NOTIFICATIONS',
+                'RECEIVE DAILY NOTIFICATIONS',
                 style: Theme.of(context).textTheme.labelLarge,
                 textAlign: TextAlign.left,
               ),

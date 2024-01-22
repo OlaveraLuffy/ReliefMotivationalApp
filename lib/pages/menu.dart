@@ -63,6 +63,7 @@ class Menu extends StatelessWidget {
                 ),
                 TextButton(
                     onPressed: () {
+                      Navigator.pop(context);
                       Navigator.popAndPushNamed(context, '/journal');
                     },
                     child: Text(
@@ -79,6 +80,7 @@ class Menu extends StatelessWidget {
                 ),
                 TextButton(
                     onPressed: () {
+                      Navigator.pop(context);
                       Navigator.popAndPushNamed(context, '/settings');
                     },
                     child: Text(
@@ -95,6 +97,7 @@ class Menu extends StatelessWidget {
                 ),
                 TextButton(
                     onPressed: () {
+                      Navigator.pop(context);
                       Navigator.popAndPushNamed(context, '/onboard');
                     },
                     child: Text(

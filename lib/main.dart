@@ -10,13 +10,14 @@ import 'package:com.relief.motivationalapp/pages/quote_gallery.dart';
 import 'package:com.relief.motivationalapp/pages/create_journal.dart';
 import 'package:com.relief.motivationalapp/pages/text_page.dart';
 import 'package:com.relief.motivationalapp/pages/report.dart';
-import 'package:com.relief.motivationalapp/services/ads.dart';
 import 'package:com.relief.motivationalapp/services/journal_data_manager.dart';
 import 'package:com.relief.motivationalapp/services/notifications.dart';
 import 'package:com.relief.motivationalapp/services/quotes_data_manager.dart';
 import 'package:com.relief.motivationalapp/services/user_preferences.dart';
 import 'package:com.relief.motivationalapp/theme/theme_constants.dart';
 import 'package:com.relief.motivationalapp/theme/theme_manager.dart';
+
+import 'package:com.relief.motivationalapp/services/ads.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -27,7 +28,7 @@ void main() async {
   await Notifications.init();
   await UserPrefs.init();
   // TODO: enable ads here on production, change also the id in build.gradle
-  AdService.init();
+  //AdService.init();
   runApp(ReliefApp());
 }
 
@@ -42,11 +43,11 @@ class ReliefApp extends StatefulWidget {
 }
 
 class _ReliefAppState extends State<ReliefApp> {
-
   @override
   void initState() {
     widget._themeManager.addListener(themeListener);
     super.initState();
+
   }
 
   @override

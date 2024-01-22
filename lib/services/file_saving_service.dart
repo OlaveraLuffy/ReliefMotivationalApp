@@ -84,7 +84,7 @@ Future<Uint8List> _screenshotJournal(JournalEntry journalEntry) async {
       theme: lightTheme,
       darkTheme: darkTheme,
       themeMode: themeManager.themeMode,
-      home: JournalPage(journalEntry: journalEntry),
+      home: JournalPage(isScreenshot: true, journalEntry: journalEntry),
     ),
   ));
   return capturedImage;

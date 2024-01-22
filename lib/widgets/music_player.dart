@@ -10,11 +10,13 @@ class MusicPlayer extends StatefulWidget {
 
 class MusicPlayerState extends State<MusicPlayer> {
   late AudioPlayer _audioPlayer;
-  bool isPlaying = false;
+  bool isPlaying= false;
   String currentSong = 'Song Title'; // Replace with your initial song title
   List<String> songs = ['Aloha.mp3', 'Symmetry.mp3', 'Waves.mp3'];
   int currentSongIndex = 0;
   double volume = 0.5;
+
+  bool showVolumeSlider = true;
 
   @override
   void initState() {
@@ -33,8 +35,12 @@ class MusicPlayerState extends State<MusicPlayer> {
           currentSongIndex = (currentSongIndex + 1) % songs.length;
           currentSong = songs[currentSongIndex];
         });
+        _playPause();
       }
     });
+
+    currentSong = songs.first;
+    //_playPause(); //auto play when Home is initialized
   }
 
   Future<void> _playPause() async {
@@ -56,16 +62,24 @@ class MusicPlayerState extends State<MusicPlayer> {
     }
   }
 
-  void _skip() {
+  Future<void> _skip() async {
     // Stop the current song before moving to the next one
-    _audioPlayer.stop();
+    if (_audioPlayer.state == PlayerState.playing) {
+      await _audioPlayer.stop();
+    } else if (_audioPlayer.state == PlayerState.paused) {
+      await _audioPlayer.stop();
+    }
+
     // Move to the next song
-    setState(() {
-      currentSongIndex = (currentSongIndex + 1) % songs.length;
-      currentSong = songs[currentSongIndex];
-    });
+    currentSongIndex = (currentSongIndex + 1) % songs.length;
+    currentSong = songs[currentSongIndex];
+
+    // Set isPlaying to false before calling _playPause
+    // to ensure it starts playing the next song
+    isPlaying = false;
+
     // Start playing the next song
-    _playPause();
+    await _playPause();
   }
 
   void _changeVolume(double value) {
@@ -95,7 +109,7 @@ class MusicPlayerState extends State<MusicPlayer> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               IconButton(
                 icon: isPlaying ? const Icon(Icons.pause) : const Icon(Icons.play_arrow),
@@ -103,32 +117,62 @@ class MusicPlayerState extends State<MusicPlayer> {
                   await _playPause();
                 },
               ),
-              Text('Now Playing: $currentSong'),
+              Container(
+                height: 20,
+                width: 1,
+                color: Colors.white,
+              ),
               IconButton(
                 icon: const Icon(Icons.skip_next),
                 onPressed: _skip,
               ),
+              Container(
+                height: 30,
+                width: 2,
+                color: Colors.white,
+              ),
+              const SizedBox(width: 10),
+              Text('Now Playing: $currentSong',
+                style: const TextStyle(
+                  fontSize: 20,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Container(
+                height: 30,
+                width: 2,
+                color: Colors.white,
+              ),
+              IconButton(
+                icon: showVolumeSlider ? const Icon(Icons.arrow_drop_down) : const Icon(Icons.arrow_drop_up),
+                onPressed: () async {
+                  setState(() {
+                    showVolumeSlider = !showVolumeSlider;
+                  });
+                },
+              ),
             ],
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Padding(
-                padding: EdgeInsets.only(left: 13),
-                child: Icon(Icons.volume_down),
-              ),
-              Expanded(
+          if (showVolumeSlider)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.only(left: 13),
+                  child: Icon(Icons.volume_down),
+                ),
+                Expanded(
                   child: Slider(
                     value: volume,
                     onChanged: _changeVolume,
                   ),
-              ),
-              const Padding(
-                padding: EdgeInsets.only(right: 13),
-                child: Icon(Icons.volume_up),
-              ),
-            ],
-          ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.only(right: 13),
+                  child: Icon(Icons.volume_up),
+                ),
+              ],
+            ),
         ],
       ),
     );
