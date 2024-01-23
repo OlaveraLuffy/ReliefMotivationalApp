@@ -176,31 +176,4 @@ class Notifications {
     }
     return numOfPendingNotifs;
   }
-
-  // // TODO: delete this on production/done testing
-  // // Function to send a test notification
-  // static Future<void> sendNotification() async {
-  //   // You can customize the notification content here
-  //   String notificationTitle = 'Test Notification';
-  //   String notificationContent = 'This is a test notification';
-  //
-  //   // Get the current time and add a delay of 5 seconds
-  //   DateTime now = DateTime.now();
-  //   Duration delay = const Duration(seconds: 1);
-  //   tz.TZDateTime tzScheduledTime = tz.TZDateTime.now(tz.local).add(delay);
-  //
-  //   // Schedule the test notification
-  //   await notifPlugin.zonedSchedule(
-  //     0,
-  //     notificationTitle,
-  //     notificationContent,
-  //     tzScheduledTime,
-  //     notifDetails,
-  //     androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
-  //     uiLocalNotificationDateInterpretation:
-  //     UILocalNotificationDateInterpretation.absoluteTime,
-  //     payload: '/create_journal',
-  //   );
-  // }
-  ////////////////////////////////////////////////////////////////////
 }

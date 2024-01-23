@@ -17,12 +17,10 @@ class ReliefAppBar extends StatefulWidget implements PreferredSizeWidget {
 
 class _ReliefAppBarState extends State<ReliefAppBar> {
   bool showMenuButton = true;
-
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
   @override
   Widget build(BuildContext context) {
-
     Map? settings = ModalRoute.of(context)?.settings.arguments as Map?;
     showMenuButton = settings?['showMenuButton'] ?? true;
 
@@ -36,7 +34,9 @@ class _ReliefAppBarState extends State<ReliefAppBar> {
         if (!widget.isScreenshot) {
           if (showMenuButton) {
             return IconButton(
-                onPressed: () {Navigator.pushNamed(context, '/menu');},
+                onPressed: () {
+                  Navigator.pushNamed(context, '/menu');
+                },
                 icon: Image.asset(
                   'assets/images/icons/menu.png',
                   height: 30.0,

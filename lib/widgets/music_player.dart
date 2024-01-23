@@ -40,7 +40,7 @@ class MusicPlayerState extends State<MusicPlayer> {
     });
 
     currentSong = songs.first;
-    //_playPause(); //auto play when Home is initialized
+    _playPause(); //auto play when Home is initialized
   }
 
   Future<void> _playPause() async {

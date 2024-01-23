@@ -96,7 +96,6 @@ class HomeQuoteDisplay extends StatelessWidget {
                           color: Theme.of(context).primaryColorDark,
                         ),
                         child: IconButton(
-                            // TODO: Implement button functionality
                             onPressed: () {},
                             icon: const Icon(Icons.share_rounded)),
                       ),
@@ -107,7 +106,6 @@ class HomeQuoteDisplay extends StatelessWidget {
                           color: Theme.of(context).primaryColorDark,
                         ),
                         child: IconButton(
-                            // TODO: Implement button functionality
                             onPressed: () {},
                             icon: const Icon(Icons.save_alt_rounded)),
                       ),

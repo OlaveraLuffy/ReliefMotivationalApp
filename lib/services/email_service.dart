@@ -1,20 +1,25 @@
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_email_sender/flutter_email_sender.dart';
+import 'dart:developer' as dev;
 
 class ExternalUrlService {
   static const String supportEmail = 'mghs.arielmu@gmail.com';
   static const String emailSubject = 'Relief Problem Report';
 
   static void sendEmail(String content) async {
-    final Uri emailLaunchUri = Uri(
-      scheme: 'mailto',
-      path: supportEmail,
-      queryParameters: {'subject': emailSubject, 'body': content},
+    final Email email = Email(
+      body: content,
+      subject: emailSubject,
+      recipients: [supportEmail],
+      isHTML: true,
     );
-
-    if (await canLaunchUrl(emailLaunchUri)) {
-      await launchUrl(emailLaunchUri);
-    } else {
-      throw 'Could not launch email client';
+    String platformResponse;
+    try {
+      await FlutterEmailSender.send(email);
+      platformResponse = 'success';
+    } catch (error) {
+      dev.log(error.toString());
+      platformResponse = error.toString();
     }
   }
 

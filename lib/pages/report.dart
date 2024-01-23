@@ -1,17 +1,7 @@
-// ignore_for_file: unused_import
-
-import 'dart:developer' as dev;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:com.relief.motivationalapp/services/email_service.dart';
 import 'package:com.relief.motivationalapp/widgets/appbar.dart';
-
-Map<String, String> fileMap = {
-  'about the app': 'about_app.txt',
-  'about us': 'about_us.txt',
-  'privacy policy': 'privacy_policy.txt',
-  'terms of use': 'terms_of_use.txt',
-};
 
 class Report extends StatefulWidget {
   const Report({super.key});
@@ -33,10 +23,6 @@ class _ReportState extends State<Report> {
   void dispose() {
     _textController.dispose();
     super.dispose();
-  }
-
-  void sendEmail() async {
-
   }
 
   @override
@@ -88,6 +74,11 @@ class _ReportState extends State<Report> {
           onPressed: () async {
             ExternalUrlService.sendEmail(_textController.text);
             Navigator.pop(context);
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Email sent'),
+              ),
+            );
           },
           child: const Icon(Icons.send_rounded)),
     );

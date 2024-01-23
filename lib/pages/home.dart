@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:com.relief.motivationalapp/services/ads.dart';
-import 'package:com.relief.motivationalapp/services/user_preferences.dart';
 import 'package:com.relief.motivationalapp/widgets/appbar.dart';
 import 'package:com.relief.motivationalapp/widgets/quote_category.dart';
 import 'package:com.relief.motivationalapp/widgets/menu_journal.dart';
 import 'package:com.relief.motivationalapp/widgets/qotd.dart';
 import 'package:com.relief.motivationalapp/widgets/quote_scheduler.dart';
-
 import 'package:com.relief.motivationalapp/widgets/music_player.dart';
 
 class Home extends StatefulWidget {
@@ -22,15 +20,6 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-  }
-
-  void reset() async {
-    await UserPrefs.resetPrefs();
-    gotoLoading();
-  }
-
-  void gotoLoading() {
-    Navigator.pushReplacementNamed(context, '/');
   }
 
   @override
