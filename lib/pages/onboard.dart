@@ -190,7 +190,7 @@ class _QotdShareAndSave extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Text(
-            'You can share a quote by pressing the share button or download a photo of the quote using the download button',
+            'You can share a quote by pressing the share button or download the photo of the quote using the same button',
             textAlign: TextAlign.justify,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: Theme.of(context).colorScheme.onBackground

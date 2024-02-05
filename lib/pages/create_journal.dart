@@ -151,7 +151,7 @@ class _CreateJournalState extends State<CreateJournal> {
   Future<void> _openPage() async {
     if (_controller.document.toPlainText().trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Cannot share without content')),
+        const SnackBar(content: Text('Cannot share without content')),
       );
     } else if (journalEntry.content == '') {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -235,35 +235,55 @@ class _CreateJournalState extends State<CreateJournal> {
                       hintStyle: Theme.of(context).textTheme.titleMedium!.copyWith(
                           color: Theme.of(context).colorScheme.onPrimaryContainer),
                     ),
-                  ),
-
-                  const SizedBox(height: 10),
-                  _selectedImage != null
-                      ? Image.file(_selectedImage!)
-                      : const Text("Please select an image"),
-                  const SizedBox(height: 10),
-
-                  Center(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center, // Center the row horizontally
-                      children: [
-                        FloatingActionButton(
-                          heroTag: 'share',
-                          onPressed: () async {
-                            _openPage();
-                          },
-                          mini: true, // Set to true to make the button smaller
-                          child: const Icon(Icons.share),
-                        ),
-                      ],
+                    spellCheckConfiguration: SpellCheckConfiguration(
+                      spellCheckService: DefaultSpellCheckService(),
+                      misspelledSelectionColor: Colors.red,
                     ),
                   ),
+                  const SizedBox(height: 10),
+                  // DISPLAY SELECTED IMAGE
+                  Stack(
+                    alignment: Alignment.topRight,
+                    children: [
+                      _selectedImage != null
+                          ? Image.file(_selectedImage!)
+                          : const Text("Please select an image"),
+                      if (_selectedImage != null)
+                        IconButton(
+                          icon: const Icon(Icons.close),
+                          onPressed: () {
+                            setState(() {
+                              _selectedImage = null;
+                              _selectedImagePath = '';
+                            });
+                          },
+                        ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 10),
                 ],
               ),
             ),
           ),
           const SizedBox(height: 80,),
-          AdService.bannerAd
+          AdService.bannerAd,
+
+          // NOTE TO SAVE BEFORE SHARING
+          const Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: Text(
+                'Note: Please save before attempting to share.',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 12,
+                ),
+              ),
+            ),
+          ),
         ],
       ),
       floatingActionButton: Stack(
@@ -304,9 +324,19 @@ class _CreateJournalState extends State<CreateJournal> {
               child: const Icon(Icons.color_lens_outlined),
             ),
           ),
+          Positioned(
+            bottom: 120,
+            left: 35,
+            child: FloatingActionButton(
+              heroTag: 'share',
+              onPressed: () {
+                _openPage();
+              },
+              child: const Icon(Icons.share),
+            ),
+          ),
         ],
       ),
     );
   }
 }
-

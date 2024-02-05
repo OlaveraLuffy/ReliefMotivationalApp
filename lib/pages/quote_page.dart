@@ -126,17 +126,7 @@ class _QuotePageState extends State<QuotePage> {
                                     .colorScheme
                                     .secondary,
                               ),
-                              child: IconButton(
-                                  onPressed: () {
-                                    saveQuoteImage(_quote).then((info) {
-                                      if (info['success']) {
-                                        showAlert(context, 'Image Saved!');
-                                      } else {
-                                        showAlert(context, 'An error has occurred.');
-                                      }
-                                    });
-                                  },
-                                  icon: const Icon(Icons.download_rounded))),
+                          ),
                           const SizedBox(
                             width: 30,
                           ),
@@ -167,7 +157,7 @@ class _QuotePageState extends State<QuotePage> {
                     child: Align(
                       alignment: Alignment.center,
                       child: Text(
-                        'Relief Motivational App\nby MGHS',
+                        'Relief Motivational App\nby diarynigracia',
                         style: Theme.of(context).textTheme.titleSmall?.copyWith(
                           fontStyle: FontStyle.italic,
                           fontWeight: FontWeight.normal

@@ -11,8 +11,8 @@ class MusicPlayer extends StatefulWidget {
 class MusicPlayerState extends State<MusicPlayer> {
   late AudioPlayer _audioPlayer;
   bool isPlaying= false;
-  String currentSong = 'Song Title'; // Replace with your initial song title
-  List<String> songs = ['Aloha.mp3', 'Symmetry.mp3', 'Waves.mp3'];
+  String currentSong = 'Song Title';
+  List<String> songs = ['Waves.mp3'];
   int currentSongIndex = 0;
   double volume = 0.5;
 
@@ -29,57 +29,45 @@ class MusicPlayerState extends State<MusicPlayer> {
     _audioPlayer.onPlayerStateChanged.listen((PlayerState state) {
       if (state == PlayerState.completed) {
         // The song has finished playing, update the current song title or perform other actions
-        setState(() {
-          isPlaying = false;
-          // Move to the next song
-          currentSongIndex = (currentSongIndex + 1) % songs.length;
-          currentSong = songs[currentSongIndex];
-        });
-        _playPause();
+        _skip();
       }
     });
 
-    currentSong = songs.first;
-    _playPause(); //auto play when Home is initialized
+    if (songs.isNotEmpty) {
+      currentSong = songs.first;
+      _playPause(); // Auto play when Home is initialized
+    }
   }
 
   Future<void> _playPause() async {
-    if (currentSong != 'Song Title') {
-      String songPath = currentSong;
-      if (isPlaying) {
-        await _audioPlayer.pause();
+    String songPath = currentSong;
+    if (isPlaying) {
+      await _audioPlayer.pause();
+    } else {
+      if (_audioPlayer.state == PlayerState.paused) {
+        await _audioPlayer.resume();
       } else {
-        if (_audioPlayer.state == PlayerState.paused) {
-          await _audioPlayer.resume();
-        } else {
-          await _audioPlayer.play(AssetSource('audio/music/$songPath'));
-        }
+        await _audioPlayer.play(AssetSource('audio/music/$songPath'));
       }
-
-      setState(() {
-        isPlaying = !isPlaying;
-      });
     }
+
+    setState(() {
+      isPlaying = !isPlaying;
+    });
   }
 
-  Future<void> _skip() async {
-    // Stop the current song before moving to the next one
-    if (_audioPlayer.state == PlayerState.playing) {
-      await _audioPlayer.stop();
-    } else if (_audioPlayer.state == PlayerState.paused) {
-      await _audioPlayer.stop();
+  void _skip() {
+    if (songs.isNotEmpty) {
+      // Move to the next song
+      currentSongIndex = (currentSongIndex + 1) % songs.length;
+      currentSong = songs[currentSongIndex];
+
+      // Set isPlaying to false before calling _playPause
+      // to ensure it starts playing the next song
+      isPlaying = false;
+
+      _playPause();
     }
-
-    // Move to the next song
-    currentSongIndex = (currentSongIndex + 1) % songs.length;
-    currentSong = songs[currentSongIndex];
-
-    // Set isPlaying to false before calling _playPause
-    // to ensure it starts playing the next song
-    isPlaying = false;
-
-    // Start playing the next song
-    await _playPause();
   }
 
   void _changeVolume(double value) {
@@ -116,15 +104,6 @@ class MusicPlayerState extends State<MusicPlayer> {
                 onPressed: () async {
                   await _playPause();
                 },
-              ),
-              Container(
-                height: 20,
-                width: 1,
-                color: Colors.white,
-              ),
-              IconButton(
-                icon: const Icon(Icons.skip_next),
-                onPressed: _skip,
               ),
               Container(
                 height: 30,

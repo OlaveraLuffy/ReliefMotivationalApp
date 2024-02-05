@@ -158,25 +158,6 @@ class _QuoteCard extends StatelessWidget {
                               icon: const Icon(Icons.share_rounded)),
                         ),
                         const SizedBox(width: 10),
-
-                        // Save button
-                        Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Theme.of(context).primaryColorDark,
-                          ),
-                          child: IconButton(
-                              onPressed: () {
-                                saveQuoteImage(quote).then((info) {
-                                if (info['isSuccess']) {
-                                  showAlert(context, 'Image Saved!');
-                                } else {
-                                  showAlert(context, 'Unable to save image. Please allow the app to enable image saving through your device\'s settings.');
-                                }
-                                });
-                              },
-                              icon: const Icon(Icons.save_alt_rounded)),
-                        ),
                       ],
                     )
                   ],
