@@ -28,8 +28,7 @@ void main() async {
   await Notifications.init();
   await UserPrefs.init();
   // TODO: enable ads here on production, change also the id in build.gradle
-  //AdService.init();
-
+  AdService.init();
   runApp(ReliefApp());
 }
 

@@ -5,6 +5,8 @@ import 'package:com.relief.motivationalapp/services/user_preferences.dart';
 import 'package:com.relief.motivationalapp/widgets/appbar.dart';
 import 'package:com.relief.motivationalapp/widgets/quote_category_selector.dart';
 
+import 'package:permission_handler/permission_handler.dart';
+
 class Settings extends StatefulWidget {
   const Settings({super.key});
 
@@ -38,7 +40,7 @@ class _SettingsState extends State<Settings> {
               const _About(),
               const _Feedback(),
               const _Legal(),
-              
+
               const SizedBox(height:20),
             ],
           ),
@@ -97,14 +99,62 @@ class _RcvNotifsState extends State<_RcvNotifs> {
 
   Future<void> _toggleDailyNotifs() async {
     if (receiveNotifications) {
-      Notifications.scheduleNotification(
-          time: selectedTime, destinationRoute: '/create_journal');
+      // Check if notification permission is granted
+      var notificationStatus = await Permission.notification.status;
+      if (notificationStatus.isGranted) {
+        // Permission already granted, schedule notification
+        Notifications.scheduleNotification(
+          time: selectedTime,
+          destinationRoute: '/create_journal',
+        );
+      } else {
+        // Pass the context directly to the _showPermissionDialog function
+        await _showPermissionDialog();
+      }
     } else {
       Notifications.cancelScheduledNotification(0);
     }
 
     UserPrefs.setReceiveNotifications(receiveNotifications);
+  }
 
+  Future<void> _showPermissionDialog() async {
+    return showDialog(
+      context: context, // Use the context passed from _toggleDailyNotifs
+      builder: (BuildContext context) {
+        return Theme(
+          // Customize the background color here
+          data: ThemeData(
+            // Use colorScheme.background to set the background color
+            colorScheme: Theme.of(context).colorScheme.copyWith(
+              background: Colors.grey[200], // Change to your desired color
+            ),
+          ),
+          child: AlertDialog(
+            title: const Text("Permission Required"),
+            content: const Text("Please grant permission in system Apps & Notifications to show notifications."),
+            actions: <Widget>[
+              // Use TextButton instead of FlatButton
+              TextButton(
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                  await Permission.notification.request();
+                  // After permission is requested, schedule notification
+                  Notifications.scheduleNotification(
+                    time: selectedTime,
+                    destinationRoute: '/create_journal',
+                  );
+                },
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(const Color(0xFF879d55)),
+                ),
+                child: const Text("OK"),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -131,11 +181,19 @@ class _RcvNotifsState extends State<_RcvNotifs> {
             ),
             Switch(
                 value: receiveNotifications,
-                onChanged: (bool value) {
+                onChanged: (bool value) async {
                   setState(() {
                     receiveNotifications = value;
                     _toggleDailyNotifs();
                   });
+                  // Check notification permission status
+                  var notificationStatus = await Permission.notification.status;
+                  if (!notificationStatus.isGranted) {
+                    // If notification permission is not granted, turn off the switch
+                    setState(() {
+                      receiveNotifications = false;
+                    });
+                  }
                 },
               activeColor: Colors.white,
               inactiveTrackColor: Colors.grey,
